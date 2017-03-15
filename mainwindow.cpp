@@ -196,14 +196,16 @@ void MainWindow::on_pushButton_about_clicked()
 
 void MainWindow::on_pushButton_savehistorique_clicked()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("open File"),"/home/ballec/Projets/requete","*.sql");
-    QFile file(fileName+'.sql');
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return;
-
-    for(int i=0; i>ui->listWidget_historique->count(); i++){
-            std::cout << ui->listWidget_historique->item(i) << std::endl;
-         }
+    QString fichier = QFileDialog::getSaveFileName(this,tr("Save File"), "/home", ".sql");
+    QFile file(fichier);
+         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+             return;
+         QTextStream out(&file);
+         for(int resul=0; resul< ui->listWidget_historique->count();resul++)
+          {
+             QString data=ui->listWidget_historique->item(resul)->text();
+             out << data << "\n";
+          }
 }
 
 void MainWindow::on_pushButton_cancel_clicked()
@@ -218,12 +220,34 @@ void MainWindow::on_pushButton_cancel_clicked()
 
 void MainWindow::on_pushButton_exporter_clicked()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("open File"),"/home/ballec/Projets/requete","*.sql");
-    QFile file(fileName+'.sql');
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return;
-
-    for(int i=0; i>ui->listWidget_historique->count(); i++){
-            std::cout << ui->listWidget_historique->item(i) << std::endl;
+    QString fichier = QFileDialog::getSaveFileName(this,tr("Save File"), "/home", ".csv");
+    QFile file(fichier);
+         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+             return;
+         QTextStream out(&file);
+         for(int row=0; row< ui->tableWidget_resultat->rowCount();row++)
+         {
+             for(int col=0; col< ui->tableWidget_resultat->columnCount();col++)
+             {
+                 QString data=ui->tableWidget_resultat->item(row,col)->text();
+                 out << data << "\n";
+             }
          }
+}
+
+void MainWindow::on_pushButton_importer_clicked()
+{
+    QString fichier = QFileDialog::getOpenFileName(this,tr("Open File"), "/home", "*.sql");
+    QFile file(fichier);
+         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+         {
+             ui->listWidget_historique->clear();
+             return;
+         }
+         QTextStream in(&file);
+         while (!in.atEnd())
+             {
+                    QString line = in.readLine();
+                    ui->listWidget_historique->addItem(line);
+              }
 }

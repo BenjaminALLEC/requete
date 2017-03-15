@@ -37,6 +37,8 @@ private slots:
 
     void on_pushButton_exporter_clicked();
 
+    void on_pushButton_importer_clicked();
+
 private:
     Ui::MainWindow *ui;
     void chargerLesBases();
